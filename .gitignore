@@ -1,0 +1,8 @@
+src/pose/pose/coco/pose_iter_440000.caffemodel
+src/pose/pose/mpi/pose_iter_160000.caffemodel
+
+src/pose/Output-Keypoints.jpg
+src/pose/Output-Skeleton.jpg
+
+env37
+.idea
