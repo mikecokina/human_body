@@ -16,7 +16,11 @@ points_of_interest = [
     mp_landmark.MOUTH_RIGHT,
     mp_landmark.MOUTH_LEFT,
     mp_landmark.RIGHT_SHOULDER,
-    mp_landmark.LEFT_SHOULDER
+    mp_landmark.LEFT_SHOULDER,
+    mp_landmark.LEFT_ELBOW,
+    mp_landmark.RIGHT_ELBOW,
+    mp_landmark.LEFT_KNEE,
+    mp_landmark.RIGHT_KNEE,
 ]
 
 
@@ -151,11 +155,12 @@ def lookup():
                         frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
 
                         image_width, image_height = frame.shape[1], frame.shape[0]
-                        for idx, data in enumerate(pose_landmarks.landmark):
-                            x_px = min(math.floor(data.x * image_width), image_width - 1)
-                            y_px = min(math.floor(data.y * image_height), image_height - 1)
-                            cv2.circle(frame, (int(x_px), int(y_px)), 3, (255, 0, 0), thickness=-1, lineType=cv2.FILLED)
-                            cv2.imwrite("output.png", frame)
+                        mp_drawing.draw_landmarks(
+                            frame,
+                            results.pose_landmarks,
+                            mp_pose.POSE_CONNECTIONS,
+                            landmark_drawing_spec=mp_drawing_styles.get_default_pose_landmarks_style())
+                        cv2.imwrite("output.png", frame)
                         break
 
                 # Draw the pose annotation on the image.
