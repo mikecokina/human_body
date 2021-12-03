@@ -9,7 +9,7 @@ mp_pose = mp.solutions.pose
 mp_drawing = mp.solutions.drawing_utils
 mp_drawing_styles = mp.solutions.drawing_styles
 
-BG_COLOR = (192, 192, 192) # gray
+BG_COLOR = (192, 192, 192)  # gray
 image_file = os.path.join(os.path.dirname(__file__), "single.jpeg")
 
 with mp_pose.Pose(
@@ -48,7 +48,7 @@ with mp_pose.Pose(
     cv2.imwrite('Output-Keypoints-Mediapipe.png', annotated_image)
 
     # Plot pose world landmarks.
-    # mp_drawing.plot_landmarks(pose_world_landmarks, mp_pose.POSE_CONNECTIONS)
+    mp_drawing.plot_landmarks(pose_world_landmarks, mp_pose.POSE_CONNECTIONS)
 
     # `pose_world_landmarks` contain 3D estimation of pose in COCO format.
     # indices are axesible in same way as standard 2D landmarks via enum mp_pose.PoseLandmark.<VALUE>
