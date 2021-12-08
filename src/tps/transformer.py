@@ -3,7 +3,7 @@ import numpy as np
 
 import matplotlib.pyplot as plt
 
-IMAGE_FILE = "img.png"
+IMAGE_FILE = "img_2.png"
 tps = cv2.createThinPlateSplineShapeTransformer()
 img = cv2.imread(IMAGE_FILE, cv2.IMREAD_COLOR)
 
