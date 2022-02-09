@@ -3,6 +3,10 @@ import matplotlib
 import numpy as np
 from matplotlib import pyplot as plt
 
+"""
+https://www.researchgate.net/publication/297585117_Image_Restoration_Based_on_Morphological_Operations
+"""
+
 matplotlib.use('TkAgg')
 
 a = np.array([
