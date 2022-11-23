@@ -39,7 +39,7 @@ def plot_colors(histogram, centroids):
 
 
 def main():
-    colors
+    pass
 
 
 if __name__ == '__main__':
@@ -49,29 +49,28 @@ if __name__ == '__main__':
 # construct the argument parser and parse the arguments
 
 
+args = {
+    "image": "01.jpg",
+    "clusters": 5
+}
 
-# args = {
-#     "image": "01.jpg",
-#     "clusters": 5
-# }
-#
-# # load the image and convert it from BGR to RGB so that
-# # we can dispaly it with matplotlib
-# image = cv2.imread(args["image"])
-# image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-#
-# im = image.reshape((image.shape[0] * image.shape[1], 3))
-# clt = KMeans(n_clusters=args["clusters"])
-# clt.fit(im)
-#
-# hist = centroid_histogram(clt)
-# bar = plot_colors(hist, clt.cluster_centers_)
-#
-# # show our image
-# fig, axs = plt.subplots(1, 2)
-#
-# axs[0].axis("off")
-# axs[0].imshow(image)
-# axs[1].imshow(bar)
-#
-# plt.show()
+# load the image and convert it from BGR to RGB so that
+# we can dispaly it with matplotlib
+image = cv2.imread(args["image"])
+image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+
+im = image.reshape((image.shape[0] * image.shape[1], 3))
+clt = KMeans(n_clusters=args["clusters"])
+clt.fit(im)
+
+hist = centroid_histogram(clt)
+bar = plot_colors(hist, clt.cluster_centers_)
+
+# show our image
+fig, axs = plt.subplots(1, 2)
+
+axs[0].axis("off")
+axs[0].imshow(image)
+axs[1].imshow(bar)
+
+plt.show()
