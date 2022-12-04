@@ -27,6 +27,7 @@ COLORS_DIR = THIS_DIR / 'data'
 COLORS_LAB_CENTRES = COLORS_DIR / 'lab_cie_centres.npy'
 COLORS_DIR_ASSIGNED = COLORS_DIR / 'assigned'
 HTML_COLORS = THIS_DIR / 'html_colors.csv'
+COLORS_DIST_TOL = 10
 
 
 class AbstractColor(metaclass=abc.ABCMeta):
@@ -98,10 +99,18 @@ class LAB(AbstractColor):
     def delta_e_distance(self, other: 'LAB'):
         return delta_e_cie2000(self.lab, other.lab)
 
+    def distance(self, other):
+        return self.delta_e_distance(other)
+
     def assing_to_palette(self, palette):
         palette = palette.values()
-        argmin = np.argmin([self.delta_e_distance(self.__class__(color)) for color in palette])
-        return palette[argmin]
+        deltas = [self.distance(self.__class__(color)) for color in palette]
+        condition = [delta_e < COLORS_DIST_TOL for delta_e in deltas]
+
+        if any(condition):
+            argmin = np.argmin(deltas)
+            return palette[argmin]
+        return None
 
 
 class Yxy(AbstractColor):
@@ -144,9 +153,27 @@ class RGB(AbstractColor):
         b = int(self.b - other.b)
         return sqrt((((512 + rmean) * r * r) >> 8) + 4 * g * g + (((767 - rmean) * b * b) >> 8))
 
+    def distance(self, other):
+        return self.redmean_distance(other)
+
     def assing_to_palette(self, palette):
         palette = palette.values()
-        argmin = np.argmin([self.redmean_distance(self.__class__(color)) for color in palette])
+        deltas = [self.distance(self.__class__(color)) for color in palette]
+        condition = [delta_e < COLORS_DIST_TOL for delta_e in deltas]
+
+        if any(condition):
+            argmin = np.argmin(deltas)
+            return palette[argmin]
+        return None
+
+
+class NaiveRGB(RGB):
+    def distance(self, other: 'NaiveRGB'):
+        return abs(self.r - other.r) + abs(self.g - other.g) + abs(self.b - other.b)
+
+    def assing_to_palette(self, palette):
+        palette = palette.values()
+        argmin = np.argmin([self.distance(self.__class__(color)) for color in palette])
         return palette[argmin]
 
 
@@ -283,14 +310,20 @@ def resolve_palette(palette, mod='RGB', n=1000):
             color_instance = RGB.as_random_rgb()
         elif mod == 'LAB':
             color_instance = LAB.as_random_rgb()
+        elif mod == 'NaiveRGB':
+            color_instance = NaiveRGB.as_random_rgb()
         else:
             raise ValueError('')
 
         rgb_hex = color_instance.rgb_to_hex(color_instance.rgb)
         color_image = generate_pil(rgb_hex)
         assigned_color = color_instance.assing_to_palette(palette)
-        color_path = COLORS_DIR_ASSIGNED / assigned_color / f'{rgb_hex}.png'
-        save_pil(color_image, color_path)
+
+        if assigned_color is not None:
+            color_path = COLORS_DIR_ASSIGNED / assigned_color / f'{rgb_hex}.png'
+            save_pil(color_image, color_path)
+        else:
+            print(f'{rgb_hex} is too far from palette')
 
 
 def get_random_rgb(n: int = 1000):
@@ -383,7 +416,8 @@ def main():
     # predict_palette(CIE2000Palette)
     # palette = load_predicted_palette()
     # palette = load_html_palette()
-    resolve_palette(HuePalette, 'LAB', n=5000)
+    palette = HuePalette
+    resolve_palette(palette, 'LAB', n=5000)
 
 
 if __name__ == '__main__':
